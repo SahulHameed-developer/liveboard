@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LiveBoard — real-time collaborative task board</title>
+  <meta name="description" content="Real-time collaborative Kanban board with live cursors, presence, CRDT sync, optimistic UI and offline-first IndexedDB." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232563eb'/><rect x='12' y='14' width='11' height='36' rx='3' fill='white'/><rect x='27' y='14' width='11' height='24' rx='3' fill='white'/><rect x='42' y='14' width='11' height='30' rx='3' fill='white'/></svg>" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">▦</span><div><b>LiveBoard</b><small>board: <span id="boardName"></span> · <span id="mode"></span></small></div></div>
+    <div class="controls">
+      <div class="peers"><div id="peers"></div><span id="peerCount"></span></div>
+      <span id="status" class="status">Connecting…</span>
+      <button id="netBtn" class="ghost">Go offline</button>
+      <button id="nameBtn" class="ghost">Rename</button>
+      <button id="shareBtn">Invite</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section id="board" class="board" aria-label="Task board">
+      <div class="col" data-col="todo"><h2>To do <span class="count"></span></h2><form><input name="title" placeholder="+ Add a task" maxlength="140" autocomplete="off" /></form><div class="cards"></div></div>
+      <div class="col" data-col="doing"><h2>In progress <span class="count"></span></h2><form><input name="title" placeholder="+ Add a task" maxlength="140" autocomplete="off" /></form><div class="cards"></div></div>
+      <div class="col" data-col="review"><h2>Review <span class="count"></span></h2><form><input name="title" placeholder="+ Add a task" maxlength="140" autocomplete="off" /></form><div class="cards"></div></div>
+      <div class="col" data-col="done"><h2>Done <span class="count"></span></h2><form><input name="title" placeholder="+ Add a task" maxlength="140" autocomplete="off" /></form><div class="cards"></div></div>
+    </section>
+    <aside class="side">
+      <h2>Activity</h2>
+      <ul id="activity" class="activity"><li class="muted">Changes from everyone appear here in real time.</li></ul>
+      <div class="tips">
+        <b>Try it</b>
+        <ol>
+          <li>Open this page in a second tab or window.</li>
+          <li>Drag cards, edit them, watch cursors &amp; presence.</li>
+          <li>Click <em>Go offline</em>, make edits, then go online: queued changes sync and merge.</li>
+        </ol>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="editor">
+    <form method="dialog">
+      <h2>Edit task</h2>
+      <label>Title<input name="title" maxlength="140" required /></label>
+      <label>Description<textarea name="description" rows="5" maxlength="2000"></textarea></label>
+      <label>Priority<select name="priority"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
+      <div class="dlg-actions"><button value="cancel" class="ghost" formnovalidate>Cancel</button><button value="save">Save</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="/socket.io/socket.io.js" onerror="this.remove()"></script>
+  <script src="crdt.js"></script>
+  <script src="store.js"></script>
+  <script src="transport.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
